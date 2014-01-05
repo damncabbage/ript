@@ -1,0 +1,9 @@
+language: ruby
+rvm:
+  - 1.9.2
+  - 1.9.3
+  - 2.0.0
+install:
+  - export rvmsudo_secure_path=0
+  - rvmsudo bundle install --deployment
+script: rvmsudo bundle exec rake features

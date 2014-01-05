@@ -1,4 +1,4 @@
-Ript
+Ript [![Build Status](https://travis-ci.org/damncabbage/ript.png?branch=travis-build)](https://travis-ci.org/damncabbage/ript)
 ====
 
 Ript provides a clean Ruby DSL for describing firewall rules, and implements

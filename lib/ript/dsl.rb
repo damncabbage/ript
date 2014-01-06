@@ -29,44 +29,51 @@ module Ript
       filename, line = caller.first.split(':')[0..1]
 
       if c = partitions.find {|c| c.name == name }
-        puts "Error: Partition name '#{name}' is already defined!"
-        puts " - existing definition: #{c.filename}:#{c.line}"
-        puts " - new definition: #{filename}:#{line}"
-        puts "Aborting."
-        exit 140
+        raise PartitionNameError, [
+          "Error: Partition name '#{name}' is already defined!",
+          " - existing definition: #{c.filename}:#{c.line}",
+          " - new definition: #{filename}:#{line}",
+        ].join("\n")
       end
 
       if name =~ /\s+/
-        puts "Error: #{filename}:#{line}"
-        puts "Error: Partition name '#{name}' can't contain whitespace."
-        puts "Aborting."
-        exit 140
+        raise PartitionNameError, [
+          "Error: #{filename}:#{line}",
+          "Error: Partition name '#{name}' can't contain whitespace.",
+        ].join("\n")
       end
 
       if name.count('-') > 0
-        puts "Error: #{filename}:#{line}"
-        puts "Error: Partition name '#{name}' can't contain dashes ('-')."
-        puts "Aborting."
-        exit 140
+        raise PartitionNameError, [
+          "Error: #{filename}:#{line}",
+          "Error: Partition name '#{name}' can't contain dashes ('-').",
+        ].join("\n")
       end
 
       if name.length > 20
-        puts "Error: #{filename}:#{line}"
-        puts "Error: Partition name '#{name}' cannot be longer than 20 characters."
-        puts "Aborting."
-        exit 140
+        raise PartitionNameError, [
+          "Error: #{filename}:#{line}",
+          "Error: Partition name '#{name}' cannot be longer than 20 characters.",
+        ].join("\n")
       end
 
-      if filenames.include?(filename)
-        puts "Error: #{filename}:#{line}"
-        puts "Error: Multiple partition definitions are not permitted in the same file."
-        puts "Aborting."
-        exit 140
+      if self.filenames.include?(filename)
+        raise PartitionNameError, [
+          "Error: #{filename}:#{line}",
+          "Error: Multiple partition definitions are not permitted in the same file.",
+        ].join("\n")
       end
 
       partition = Ript::Partition.new(name, block)
       self.partitions << partition
       self.filenames << filename
+
+    rescue PartitionNameError => e
+      # TODO: Move exits and exit codes back out into the CLI app itself.
+      # Catch them here for compatibility's sake in the mean time.
+      puts e.message
+      puts "Aborting."
+      exit 140
     end
   end
 end

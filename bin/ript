@@ -99,14 +99,14 @@ if ARGV[0] == 'rules'
     end
 
     if ARGV[1] == "generate"
-      @partitions.each do |partition|
+      self.partitions.each do |partition|
         puts "# #{partition.name}-#{partition.id}"
         puts partition.to_iptables
       end
     end
 
     if ARGV[1] == "diff"
-      @partitions.each do |partition|
+      self.partitions.each do |partition|
         # We assume here that if a partition has a partition-a chain it will have all the others
         chain_name = "#{partition.name}-#{partition.id.split('-').first}".sub(/-/, '-a')
         unless current_chain_names_by_partition[:a].has_key?(partition.name) && current_chain_names_by_partition[:a][partition.name].include?(chain_name)
@@ -190,11 +190,11 @@ if ARGV[0] == "clean" then
       exit 160
     end
 
-    current_chain_names_by_partition.each_pair do |type, partitions|
-      partitions.each_pair do |partition, chains|
+    current_chain_names_by_partition.each_pair do |type, partition_chains|
+      partition_chains.each_pair do |partition, chains|
         # If we are in file mode don't remove other partitions
-        next if File.file?(path) && ! @partitions.map(&:name).include?(partition)
-        partition_obj = @partitions.find {|c| c.name == partition }
+        next if File.file?(path) && ! self.partitions.map(&:name).include?(partition)
+        partition_obj = self.partitions.find {|c| c.name == partition }
         unless partition_obj.nil?
           chain_name = "#{partition_obj.name}-#{type}#{partition_obj.id.split('-').first}"
           chains = chains - [chain_name]

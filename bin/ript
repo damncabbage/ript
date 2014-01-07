@@ -29,7 +29,7 @@ if ARGV[0] == 'rules'
       exit 160
     end
 
-    if `iptables --list partition-a --numeric 2>&1 | grep Chain` !~ /^Chain/
+    unless Ript::Iptables.has_partition?(:a)
       require 'ript/bootstrap'
       puts "# bootstrap"
       puts Ript::Bootstrap.partition.to_iptables

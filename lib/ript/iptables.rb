@@ -2,6 +2,10 @@ module Ript
   module Iptables
     module_function
 
+    def has_partition?(type)
+      `iptables --list #{partition_types[type]} --numeric 2>&1 | grep Chain` =~ /^Chain/
+    end
+
     def partition_types
       {
         :a => 'filter',

@@ -6,6 +6,7 @@ $: << Pathname.new(__FILE__).parent.parent.join('lib').expand_path.to_s
 $: << Pathname.new(__FILE__).parent.parent.expand_path.to_s
 $: << Dir.pwd
 require 'ript/dsl'
+require 'ript/cli'
 require 'tempfile'
 
 if Process.uid != 0 then
@@ -20,24 +21,11 @@ end
 
 if ARGV[0] == 'rules'
   if ARGV[1] == "generate" or ARGV[1] == "diff" then
-    path = Pathname.new(ARGV[2])
 
-    case
-    when path.directory?
-      path = (path + "**/*.rb").to_s
-      files = Pathname.glob(path)
-      files.each do |file|
-        require "#{file}"
-      end
-    when path.exist?
-      begin
-        require "#{path}"
-      rescue LoadError
-        puts "The specified rule file '#{path}' does not exist"
-        exit 160
-      end
-    else
-      puts "The specified rule file or directory '#{path}' does not exist"
+    begin
+      Ript::CLI.load_rules_from_path(ARGV.fetch(2))
+    rescue LoadError => e
+      puts e.message
       exit 160
     end
 

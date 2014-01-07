@@ -6,6 +6,7 @@ end
 $LOAD_PATH << File.expand_path('../..', File.dirname(__FILE__))
 
 require 'ript/dsl/primitives'
+require 'ript/iptables'
 require 'ript/rule'
 require 'ript/partition'
 require 'ript/exceptions'
